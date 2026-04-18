@@ -5,7 +5,7 @@ Amber is a fun one, its mostly browns and golds and yellows) . this ones v4, so 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>TV Viewer — 3:4 Channel Player</title>
+    <title>TV Viewer — 4:3 Channel Player</title>
     <style>
         * {
             margin: 0;
@@ -39,7 +39,7 @@ Amber is a fun one, its mostly browns and golds and yellows) . this ones v4, so 
             z-index: 0;
         }
 
-        /* MAIN TV CARD — glassmorphism, 3:4 aspect ratio container */
+        /* MAIN TV CARD — glassmorphism, 4:3 aspect ratio container */
         .tv-card {
             max-width: 900px;
             width: 100%;
@@ -160,7 +160,7 @@ Amber is a fun one, its mostly browns and golds and yellows) . this ones v4, so 
             transform: scale(0.96);
         }
 
-        /* Responsive: keep 3:4 ratio, adjust padding */
+        /* Responsive: keep 4:3 ratio, adjust padding */
         @media (max-width: 700px) {
             .tv-card {
                 padding: 20px;
@@ -199,7 +199,7 @@ Amber is a fun one, its mostly browns and golds and yellows) . this ones v4, so 
 <body>
 
 <div class="tv-card">
-    <!-- main TV screen area: 4:3 frame inside the 3:4 card -->
+    <!-- main TV screen area: 4:3 frame inside the 4:3 card -->
     <div class="player-area">
         <iframe id="dynamicPlayer" 
                 title="tv channel player" 
