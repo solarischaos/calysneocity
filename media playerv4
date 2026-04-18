@@ -15,7 +15,7 @@ Amber is a fun one, its mostly browns and golds and yellows) . this ones v4, so 
 
         body {
             min-height: 100vh;
-            /* cyberpunk / cosmic background from the original design */
+            /* noise gif  */
             background: url('https://64.media.tumblr.com/0ac9d68d6f8915794e1fbd8ca8b6a245/35d2387a6c099773-0f/s400x600/9c3f9f32a995de10a1a45a860a5b67ec6af46b8e.gif') center/cover no-repeat fixed;
             background-size: cover;
             display: flex;
