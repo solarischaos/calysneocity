@@ -1,0 +1,488 @@
+<!-- Media player i'm working on, it already has videos in it, that can be swapped out. theres 3 themes here : dark,light, and amber. 
+Amber is a fun one, its mostly browns and golds and yellows) . this ones v4, so its had a few iterations already. --> 
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Parlor</title>
+
+    <link href="https://fonts.cdnfonts.com/css/opendyslexic" rel="stylesheet">
+    <style>
+        /* LOW OPACITY OVERLAY IMAGE - GOES OVER EVERYTHING */
+        .overlay-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://64.media.tumblr.com/c30f4d74f531b58ec935672f41a621b1/f3809ed0187af885-6b/s500x750/750a1fb0b474887e96f4500644047cb66d27b4a5.gifv');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        body {
+            background-image: url('https://64.media.tumblr.com/0ac9d68d6f8915794e1fbd8ca8b6a245/35d2387a6c099773-0f/s400x600/9c3f9f32a995de10a1a45a860a5b67ec6af46b8e.gifv');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #2c01f8;
+            font-family: 'OpenDyslexic', monospace, sans-serif;
+            position: relative;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .table-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: relative;
+            z-index: 2;
+            margin-top: 20px;
+            gap: 20px;
+            flex: 1;
+        }
+        
+        .left-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        table, th, td {
+            border: 1px solid black;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        th {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .header-table {
+            width: 100%;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-table td {
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+        
+        .header-table h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        
+        .image-table {
+            width: 100%;
+        }
+        
+        .image-table td {
+            padding: 10px;
+            text-align: center;
+        }
+        
+.left-column {
+    flex: 0 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.content-table {
+    flex: 0 1 auto;
+}
+        
+        .links-table {
+            width: 100%;
+        }
+        
+        .links-table td {
+            padding: 15px;
+            text-align: center;
+        }
+        
+        a:link {
+            color: #2c01f8;
+            text-decoration: none;
+        }
+        
+        a:visited {
+            color: #ffb100 !important;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .links-table a {
+            text-decoration: none;
+            display: block;
+            margin: 10px 0;
+        }
+        
+        .image-table table,
+        .chat-table table,
+        .content-table table,
+        .links-table table {
+            width: 100%;
+        }
+        
+       .footer {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    width: 100%;
+}
+        
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .footer-table td {
+            border: 1px solid black;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            text-align: center;
+            color: #2c01f8;
+        }
+        
+        .footer-table td:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+            transition: 0.3s;
+        }
+        
+        .tab-tip {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: #ffb100;
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            z-index: 999;
+            font-family: monospace;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
+        
+        /* Custom fullscreen styles */
+        .video-fullscreen-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            z-index: 10000 !important;
+            background: black !important;
+            border: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        .video-fullscreen-overlay iframe {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+        }
+        
+        .fullscreen-btn {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid #2c01f8;
+            border-radius: 5px;
+            color: #2c01f8;
+            font-family: monospace;
+            font-size: 12px;
+            padding: 2px 8px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .fullscreen-btn:hover {
+            background: rgba(44,1,248,0.3);
+            color: #ffb100;
+            border-color: #ffb100;
+        }
+        
+        .video-container {
+            display: inline-block;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        /* Floating Exit Button */
+        .exit-fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #ffb100;
+            border-radius: 5px;
+            color: #ffb100;
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 8px 16px;
+            cursor: pointer;
+            z-index: 10001;
+            display: none;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(5px);
+            letter-spacing: 1px;
+        }
+        
+        .exit-fullscreen-btn:hover {
+            background: rgba(255, 177, 0, 0.9);
+            color: #000;
+            border-color: #2c01f8;
+        }
+        
+        .exit-fullscreen-btn.visible {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                background-image: none !important;
+                background-color: #15033b !important;
+            }
+            body::before {
+                display: none !important;
+            }
+            .exit-fullscreen-btn {
+                top: 10px;
+                right: 10px;
+                padding: 5px 12px;
+                font-size: 14px;
+            }
+        }
+        @media only screen and (max-width: 1000px) {
+            body {
+                background-image: none !important;
+                background-color: #15033b !important;
+            }
+            body::before {
+                display: none !important;
+            }
+        }
+        @media only screen and (max-width: 480px) {
+            body {
+                background-image: none !important;
+                background-color: #15033b !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="overlay-image"></div>
+
+<!-- Floating Exit Button -->
+<div id="exitFullscreenBtn" class="exit-fullscreen-btn">[X] EXIT</div>
+
+<table class="header-table">
+    <tr>
+        <td>
+            <h2> Cinema </h2><br>
+            -------------------------------------------<br>
+                            Yume Nikki Soundtrack - Kikiyama 2004 <br>
+                <iframe src="https://archive.org/embed/yume-nikki-dream-sounds" width="300" height="30" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe>
+        </td>
+    </tr>
+</table>
+
+<!-- Middle Columns -->
+<div style="display: flex; gap: 20px; align-items: flex-start;">
+    
+    <div class="left-column">
+    <!-- chat table -->
+        <div class="chat-table">
+            <div style="width: 800px; height: 1000;">
+                <table>
+                    <tr>
+                        <td>
+                                              <iframe src="https://calyptalinks.neocities.org/browser" width="800px" height="1000px" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe>  <h1> Chat :3 </h1><br>
+                            <iframe src="https://www3.cbox.ws/box/?boxid=3554102&boxtag=s2QBa2" width="800px" height="350px" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe> 
+                                         <iframe width="314" height="321" scrolling="no" src="https://gifypet.neocities.org/pet/pet.html?name=Milo&dob=1775784428&gender=m&element=Water&pet=https%3A%2F%2F64.media.tumblr.com%2F08cf98eca7910a93d7bbe33633ff9414%2F1cef4985cd009eea-b6%2Fs400x600%2F6cb38df2da07c5b27f7f3bff831d5e25c4e4af8c.pnj&map=https%3A%2F%2F64.media.tumblr.com%2F27fa5c4218698931459ed7e265d05f26%2F777a8ad5d3631a08-10%2Fs1280x1920%2F1d3c00f64fdfb803219af91743e9f6a6d92bd7e1.jpg&background=https%3A%2F%2Ffile.garden%2FZWlUCY4S7Xz2vypS%2Farchived%2520backgrounds%2Ffloral%2Fbgbwflowers.gif&tablecolor=%23070125&textcolor=%23e73462" frameborder="0"></iframe> 
+                                         <iframe src="https://solitaires-online.com/snake/#id=47ptjcmqlq,no-article,no-nav,no-ads,no-feedback,dark-mode" title="Snake game" width="280" height="360"></iframe>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+<!-- Video Table Content Table -->
+    <div class="content-table">
+    <div class="chat-table">
+    <div style="width: 800px; height: auto; ">
+            <table>
+                <tr>
+                    <td>
+                        <img src="https://64.media.tumblr.com/5d63278857b2d9b08491f00d27270a27/3281a290c3ab233b-7a/s640x960/6f244e602f6c094f5127f5e9e7da30eefd32ea09.gifv" alt="Image 1" style="border-radius: 150px; width: 600px;"> 
+                        <div style="border-radius: 20px; width: 100%;">
+                            
+                            <div class="video-container" id="video-container-1">
+                                <iframe id="video-1" width="800" height="300" src="https://www.youtube.com/embed/videoseries?si=wuSZMwrHZSPbmCWm&amp;list=PL4MpeqJSMtUVrFT7lHbhwDleO6PzmivPK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                            </div>
+                            <h1> Variety Music Playlist <button class="fullscreen-btn" data-video-id="1">[FS] Fullscreen</button></h1><br>
+                            <h1>---------------------</h1><br> <br> <br>
+                            
+                            <div class="video-container" id="video-container-2">
+                                <iframe id="video-2" width="800" height="300" src="https://www.youtube.com/embed/videoseries?si=gbJWBcVXZ7iixU6e&amp;list=PL4MpeqJSMtUX-lAJFv2O8ur3NoNmgLXPx" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                            </div>
+                            <h1> Theatrics Playlist <button class="fullscreen-btn" data-video-id="2">[FS] Fullscreen</button></h1><br>
+                            <h1>---------------------</h1>
+                            
+                            <div class="video-container" id="video-container-3">
+                                <iframe id="video-3" width="800" height="300" src="https://www.youtube.com/embed/videoseries?si=dbC4mvCXX9BK0Peq&amp;list=PL4MpeqJSMtUWwPO4Ul3BZC2GoT1Dhp_B8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                            </div>
+                            <h1> Game Playthrough Playlist <button class="fullscreen-btn" data-video-id="3">[FS] Fullscreen</button></h1><br>
+                            <h1>---------------------</h1>
+                                             <div class="video-container" id="video-container-3">
+                                <iframe id="video-3" width="800" height="400" src="https://ytch.tv/"></iframe>
+                            </div>
+                            <h1> Youtube TV </h1><br>
+                            <h1>---------------------</h1>
+                            
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Middle Columns -->
+<div style="display: flex; gap: 20px; align-items: flex-start;">
+    
+    <div class="left-column">
+    <!-- sound divs table -->
+        <div class="chat-table">
+            <div style="width: 400px; height: 100%;">
+                <table>
+                    <tr>
+                        <td>
+                                              <iframe src="https://calyptalinks.neocities.org/notepad" width="400px" height="1000px" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe>  
+                                              <iframe src="https://calyptalinks.neocities.org/noise" width="400px" height="1000px" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe> <br>
+                                              <iframe src="https://calyptalinks.neocities.org/tone" width="400px" height="1000px" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe> <br>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    // Track active fullscreen container
+    let activeFullscreenContainer = null;
+    const exitBtn = document.getElementById('exitFullscreenBtn');
+    
+    // Function to exit fullscreen mode
+    function exitFullscreenMode() {
+        if (activeFullscreenContainer) {
+            var videoId = activeFullscreenContainer.id.split('-').pop();
+            var btn = document.querySelector('.fullscreen-btn[data-video-id="' + videoId + '"]');
+            
+            // Remove fullscreen class
+            activeFullscreenContainer.classList.remove('video-fullscreen-overlay');
+            
+            // Reset button text
+            if (btn) btn.textContent = '[FS] Fullscreen';
+            
+            // Hide floating exit button
+            exitBtn.classList.remove('visible');
+            
+            // Clear active container
+            activeFullscreenContainer = null;
+        }
+    }
+    
+    // Custom fullscreen functionality
+    document.querySelectorAll('.fullscreen-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var videoId = this.getAttribute('data-video-id');
+            var container = document.getElementById('video-container-' + videoId);
+            
+            // If this container is already fullscreen, exit it
+            if (activeFullscreenContainer === container) {
+                exitFullscreenMode();
+                return;
+            }
+            
+            // If another video is fullscreen, exit it first
+            if (activeFullscreenContainer) {
+                exitFullscreenMode();
+            }
+            
+            // Make container fullscreen - CSS handles the iframe sizing automatically
+            container.classList.add('video-fullscreen-overlay');
+            
+            // Change button text
+            this.textContent = '[X] Exit';
+            
+            // Set as active container
+            activeFullscreenContainer = container;
+            
+            // Show floating exit button
+            exitBtn.classList.add('visible');
+        });
+    });
+    
+    // Floating exit button click handler
+    exitBtn.addEventListener('click', function() {
+        exitFullscreenMode();
+    });
+    
+    // Press Escape to exit fullscreen
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && activeFullscreenContainer) {
+            exitFullscreenMode();
+        }
+    });
+</script>
+
+</body>
+</html>
