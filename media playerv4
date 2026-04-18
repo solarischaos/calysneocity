@@ -1,488 +1,324 @@
 <!-- Media player i'm working on, it already has videos in it, that can be swapped out. theres 3 themes here : dark,light, and amber. 
 Amber is a fun one, its mostly browns and golds and yellows) . this ones v4, so its had a few iterations already. --> 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-    <title>Parlor</title>
-
-    <link href="https://fonts.cdnfonts.com/css/opendyslexic" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>TV Viewer — 3:4 Channel Player</title>
     <style>
-        /* LOW OPACITY OVERLAY IMAGE - GOES OVER EVERYTHING */
-        .overlay-image {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            /* cyberpunk / cosmic background from the original design */
+            background: url('https://64.media.tumblr.com/0ac9d68d6f8915794e1fbd8ca8b6a245/35d2387a6c099773-0f/s400x600/9c3f9f32a995de10a1a45a860a5b67ec6af46b8e.gif') center/cover no-repeat fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', system-ui, 'Segoe UI', 'SF Mono', 'Fira Code', monospace;
+            padding: 24px;
+            position: relative;
+        }
+
+        /* semi-transparent overlay for readability */
+        body::before {
+            content: '';
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://64.media.tumblr.com/c30f4d74f531b58ec935672f41a621b1/f3809ed0187af885-6b/s500x750/750a1fb0b474887e96f4500644047cb66d27b4a5.gifv');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0.15;
+            background: rgba(0, 0, 0, 0.55);
             pointer-events: none;
-            z-index: 9999;
+            z-index: 0;
         }
-        body {
-            background-image: url('https://64.media.tumblr.com/0ac9d68d6f8915794e1fbd8ca8b6a245/35d2387a6c099773-0f/s400x600/9c3f9f32a995de10a1a45a860a5b67ec6af46b8e.gifv');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            color: #2c01f8;
-            font-family: 'OpenDyslexic', monospace, sans-serif;
-            position: relative;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .table-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            position: relative;
-            z-index: 2;
-            margin-top: 20px;
-            gap: 20px;
-            flex: 1;
-        }
-        
-        .left-column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .right-column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        table, th, td {
-            border: 1px solid black;
-            border-radius: 10px;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-        
-        th {
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-        
-        .header-table {
-            width: 100%;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .header-table td {
-            padding: 15px;
-            text-align: center;
-            font-size: 1.2em;
-        }
-        
-        .header-table h2 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-        
-        .image-table {
-            width: 100%;
-        }
-        
-        .image-table td {
-            padding: 10px;
-            text-align: center;
-        }
-        
-.left-column {
-    flex: 0 1 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
 
-.content-table {
-    flex: 0 1 auto;
-}
-        
-        .links-table {
+        /* MAIN TV CARD — glassmorphism, 3:4 aspect ratio container */
+        .tv-card {
+            max-width: 900px;
             width: 100%;
-        }
-        
-        .links-table td {
-            padding: 15px;
-            text-align: center;
-        }
-        
-        a:link {
-            color: #2c01f8;
-            text-decoration: none;
-        }
-        
-        a:visited {
-            color: #ffb100 !important;
-            text-decoration: none;
-        }
-        
-        a:hover {
-            text-decoration: underline;
-        }
-        
-        .links-table a {
-            text-decoration: none;
-            display: block;
-            margin: 10px 0;
-        }
-        
-        .image-table table,
-        .chat-table table,
-        .content-table table,
-        .links-table table {
-            width: 100%;
-        }
-        
-       .footer {
-    position: relative;
-    z-index: 2;
-    margin-top: auto;
-    width: 100%;
-}
-        
-        .footer-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .footer-table td {
-            border: 1px solid black;
-            border-radius: 10px;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 15px;
-            text-align: center;
-            color: #2c01f8;
-        }
-        
-        .footer-table td:hover {
-            background-color: rgba(0, 0, 0, 0.7);
-            transition: 0.3s;
-        }
-        
-        .tab-tip {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.7);
-            color: #ffb100;
-            font-size: 12px;
-            padding: 5px 10px;
-            border-radius: 20px;
-            z-index: 999;
-            font-family: monospace;
-            pointer-events: none;
-            backdrop-filter: blur(4px);
-        }
-        
-        /* Custom fullscreen styles */
-        .video-fullscreen-overlay {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            max-width: 100% !important;
-            max-height: 100% !important;
-            z-index: 10000 !important;
-            background: black !important;
-            border: none !important;
-            border-radius: 0 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-        
-        .video-fullscreen-overlay iframe {
-            width: 100% !important;
-            height: 100% !important;
-            max-width: 100% !important;
-            max-height: 100% !important;
-        }
-        
-        .fullscreen-btn {
-            background: rgba(0,0,0,0.6);
-            border: 1px solid #2c01f8;
-            border-radius: 5px;
-            color: #2c01f8;
-            font-family: monospace;
-            font-size: 12px;
-            padding: 2px 8px;
-            margin-left: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        
-        .fullscreen-btn:hover {
-            background: rgba(44,1,248,0.3);
-            color: #ffb100;
-            border-color: #ffb100;
-        }
-        
-        .video-container {
-            display: inline-block;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        /* Floating Exit Button */
-        .exit-fullscreen-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.85);
-            border: 2px solid #ffb100;
-            border-radius: 5px;
-            color: #ffb100;
-            font-family: monospace;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 8px 16px;
-            cursor: pointer;
-            z-index: 10001;
-            display: none;
+            aspect-ratio: 3 / 4;
+            background: rgba(18, 24, 30, 0.88);
+            backdrop-filter: blur(18px);
+            border-radius: 48px;
+            padding: 28px 28px 32px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(122, 233, 255, 0.4);
             transition: all 0.2s ease;
-            backdrop-filter: blur(5px);
-            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
         }
-        
-        .exit-fullscreen-btn:hover {
-            background: rgba(255, 177, 0, 0.9);
-            color: #000;
-            border-color: #2c01f8;
+
+        /* player area — 4:3 inner frame (classic TV shape) */
+        .player-area {
+            flex: 1;
+            background: #000000;
+            border-radius: 28px;
+            overflow: hidden;
+            border: 2px dashed rgba(122, 233, 255, 0.65);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+            position: relative;
         }
-        
-        .exit-fullscreen-btn.visible {
+
+        #dynamicPlayer {
+            width: 100%;
+            height: 100%;
+            border: none;
             display: block;
+            background: #0a0c10;
         }
-        
-        @media (max-width: 768px) {
-            body {
-                background-image: none !important;
-                background-color: #15033b !important;
+
+        /* channel strip — 6 buttons, plain text, retro feel */
+        .channel-strip {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0 16px;
+        }
+
+        /* tv button — plain text, no clock, minimal but with neon undertones */
+        .tv-btn {
+            background: rgba(10, 16, 22, 0.8);
+            border: 1px solid rgba(122, 233, 255, 0.4);
+            border-radius: 60px;
+            padding: 8px 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            letter-spacing: 0.8px;
+            text-transform: lowercase;
+            color: #cae9ff;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .tv-btn:hover {
+            transform: scale(1.02);
+            background: rgba(122, 233, 255, 0.25);
+            border-color: #7ae9ff;
+            color: white;
+            box-shadow: 0 0 10px #7ae9ff80;
+        }
+
+        .tv-btn.active {
+            background: #7ae9ff;
+            border-color: #ffffff;
+            color: #0a1f2c;
+            box-shadow: 0 0 12px #7ae9ff;
+            text-shadow: 0 0 2px rgba(0,0,0,0.2);
+        }
+
+        /* info line — subtle retro details */
+        .info-line {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            margin-top: 8px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(122, 233, 255, 0.25);
+            font-size: 0.7rem;
+            font-family: monospace;
+            color: #aaddff;
+            letter-spacing: 0.4px;
+        }
+
+        .reset-tip {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.12s;
+            font-weight: 500;
+            border: 1px solid rgba(122,233,255,0.3);
+        }
+
+        .reset-tip:hover {
+            background: #7ae9ff30;
+            color: #e0f4ff;
+            transform: scale(0.98);
+            border-color: #7ae9ff;
+        }
+
+        /* micro-interaction: flash effect */
+        .click-flash {
+            transition: 0.07s linear;
+            filter: brightness(1.2);
+            transform: scale(0.96);
+        }
+
+        /* Responsive: keep 3:4 ratio, adjust padding */
+        @media (max-width: 700px) {
+            .tv-card {
+                padding: 20px;
+                border-radius: 36px;
             }
-            body::before {
-                display: none !important;
+            .tv-btn {
+                padding: 6px 14px;
+                font-size: 0.7rem;
             }
-            .exit-fullscreen-btn {
-                top: 10px;
-                right: 10px;
+            .channel-strip {
+                gap: 8px;
+            }
+            .info-line {
+                font-size: 0.6rem;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .tv-card {
+                padding: 16px;
+                border-radius: 28px;
+            }
+            .tv-btn {
                 padding: 5px 12px;
-                font-size: 14px;
+                font-size: 0.65rem;
             }
-        }
-        @media only screen and (max-width: 1000px) {
-            body {
-                background-image: none !important;
-                background-color: #15033b !important;
-            }
-            body::before {
-                display: none !important;
-            }
-        }
-        @media only screen and (max-width: 480px) {
-            body {
-                background-image: none !important;
-                background-color: #15033b !important;
+            .channel-strip {
+                gap: 6px;
             }
         }
     </style>
 </head>
 <body>
-<div class="overlay-image"></div>
 
-<!-- Floating Exit Button -->
-<div id="exitFullscreenBtn" class="exit-fullscreen-btn">[X] EXIT</div>
-
-<table class="header-table">
-    <tr>
-        <td>
-            <h2> Cinema </h2><br>
-            -------------------------------------------<br>
-                            Yume Nikki Soundtrack - Kikiyama 2004 <br>
-                <iframe src="https://archive.org/embed/yume-nikki-dream-sounds" width="300" height="30" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe>
-        </td>
-    </tr>
-</table>
-
-<!-- Middle Columns -->
-<div style="display: flex; gap: 20px; align-items: flex-start;">
-    
-    <div class="left-column">
-    <!-- chat table -->
-        <div class="chat-table">
-            <div style="width: 800px; height: 1000;">
-                <table>
-                    <tr>
-                        <td>
-                                              <iframe src="https://calyptalinks.neocities.org/browser" width="800px" height="1000px" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe>  <h1> Chat :3 </h1><br>
-                            <iframe src="https://www3.cbox.ws/box/?boxid=3554102&boxtag=s2QBa2" width="800px" height="350px" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe> 
-                                         <iframe width="314" height="321" scrolling="no" src="https://gifypet.neocities.org/pet/pet.html?name=Milo&dob=1775784428&gender=m&element=Water&pet=https%3A%2F%2F64.media.tumblr.com%2F08cf98eca7910a93d7bbe33633ff9414%2F1cef4985cd009eea-b6%2Fs400x600%2F6cb38df2da07c5b27f7f3bff831d5e25c4e4af8c.pnj&map=https%3A%2F%2F64.media.tumblr.com%2F27fa5c4218698931459ed7e265d05f26%2F777a8ad5d3631a08-10%2Fs1280x1920%2F1d3c00f64fdfb803219af91743e9f6a6d92bd7e1.jpg&background=https%3A%2F%2Ffile.garden%2FZWlUCY4S7Xz2vypS%2Farchived%2520backgrounds%2Ffloral%2Fbgbwflowers.gif&tablecolor=%23070125&textcolor=%23e73462" frameborder="0"></iframe> 
-                                         <iframe src="https://solitaires-online.com/snake/#id=47ptjcmqlq,no-article,no-nav,no-ads,no-feedback,dark-mode" title="Snake game" width="280" height="360"></iframe>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+<div class="tv-card">
+    <!-- main TV screen area: 4:3 frame inside the 3:4 card -->
+    <div class="player-area">
+        <iframe id="dynamicPlayer" 
+                title="tv channel player" 
+                src="https://ytch.tv/" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+        </iframe>
     </div>
-<!-- Video Table Content Table -->
-    <div class="content-table">
-    <div class="chat-table">
-    <div style="width: 800px; height: auto; ">
-            <table>
-                <tr>
-                    <td>
-                        <img src="https://64.media.tumblr.com/5d63278857b2d9b08491f00d27270a27/3281a290c3ab233b-7a/s640x960/6f244e602f6c094f5127f5e9e7da30eefd32ea09.gifv" alt="Image 1" style="border-radius: 150px; width: 600px;"> 
-                        <div style="border-radius: 20px; width: 100%;">
-                            
-                            <div class="video-container" id="video-container-1">
-                                <iframe id="video-1" width="800" height="300" src="https://www.youtube.com/embed/videoseries?si=wuSZMwrHZSPbmCWm&amp;list=PL4MpeqJSMtUVrFT7lHbhwDleO6PzmivPK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                            </div>
-                            <h1> Variety Music Playlist <button class="fullscreen-btn" data-video-id="1">[FS] Fullscreen</button></h1><br>
-                            <h1>---------------------</h1><br> <br> <br>
-                            
-                            <div class="video-container" id="video-container-2">
-                                <iframe id="video-2" width="800" height="300" src="https://www.youtube.com/embed/videoseries?si=gbJWBcVXZ7iixU6e&amp;list=PL4MpeqJSMtUX-lAJFv2O8ur3NoNmgLXPx" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                            </div>
-                            <h1> Theatrics Playlist <button class="fullscreen-btn" data-video-id="2">[FS] Fullscreen</button></h1><br>
-                            <h1>---------------------</h1>
-                            
-                            <div class="video-container" id="video-container-3">
-                                <iframe id="video-3" width="800" height="300" src="https://www.youtube.com/embed/videoseries?si=dbC4mvCXX9BK0Peq&amp;list=PL4MpeqJSMtUWwPO4Ul3BZC2GoT1Dhp_B8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                            </div>
-                            <h1> Game Playthrough Playlist <button class="fullscreen-btn" data-video-id="3">[FS] Fullscreen</button></h1><br>
-                            <h1>---------------------</h1>
-                                             <div class="video-container" id="video-container-3">
-                                <iframe id="video-3" width="800" height="400" src="https://ytch.tv/"></iframe>
-                            </div>
-                            <h1> Youtube TV </h1><br>
-                            <h1>---------------------</h1>
-                            
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
+
+    <!-- 6 channel buttons — plain text, matching your spec -->
+    <div class="channel-strip">
+        <button class="tv-btn active" data-channel="ytch">television</button>
+        <button class="tv-btn" data-channel="music">music</button>
+        <button class="tv-btn" data-channel="theatre">theatre</button>
+        <button class="tv-btn" data-channel="gaming">gaming</button>
+        <button class="tv-btn" data-channel="stories">stories</button>
+        <button class="tv-btn" data-channel="twitch">painting</button>
+    </div>
+
+    <div class="info-line">
+        <span>📺 4:3 · dashed border · old time radio & youtube mixes</span>
+        <span id="resetPlayerBtn" class="reset-tip">⟳ reset to television</span>
+        <span style="margin-left: auto;">🎛️ ytch.tv + playlists + twitch + OTR</span>
     </div>
 </div>
-<!-- Middle Columns -->
-<div style="display: flex; gap: 20px; align-items: flex-start;">
-    
-    <div class="left-column">
-    <!-- sound divs table -->
-        <div class="chat-table">
-            <div style="width: 400px; height: 100%;">
-                <table>
-                    <tr>
-                        <td>
-                                              <iframe src="https://calyptalinks.neocities.org/notepad" width="400px" height="1000px" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe>  
-                                              <iframe src="https://calyptalinks.neocities.org/noise" width="400px" height="1000px" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe> <br>
-                                              <iframe src="https://calyptalinks.neocities.org/tone" width="400px" height="1000px" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe> <br>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-                </tr>
-            </table>
-        </div>
-    </div>
-</div>
-
-
 
 <script>
-    // Track active fullscreen container
-    let activeFullscreenContainer = null;
-    const exitBtn = document.getElementById('exitFullscreenBtn');
-    
-    // Function to exit fullscreen mode
-    function exitFullscreenMode() {
-        if (activeFullscreenContainer) {
-            var videoId = activeFullscreenContainer.id.split('-').pop();
-            var btn = document.querySelector('.fullscreen-btn[data-video-id="' + videoId + '"]');
-            
-            // Remove fullscreen class
-            activeFullscreenContainer.classList.remove('video-fullscreen-overlay');
-            
-            // Reset button text
-            if (btn) btn.textContent = '[FS] Fullscreen';
-            
-            // Hide floating exit button
-            exitBtn.classList.remove('visible');
-            
-            // Clear active container
-            activeFullscreenContainer = null;
-        }
-    }
-    
-    // Custom fullscreen functionality
-    document.querySelectorAll('.fullscreen-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var videoId = this.getAttribute('data-video-id');
-            var container = document.getElementById('video-container-' + videoId);
-            
-            // If this container is already fullscreen, exit it
-            if (activeFullscreenContainer === container) {
-                exitFullscreenMode();
-                return;
-            }
-            
-            // If another video is fullscreen, exit it first
-            if (activeFullscreenContainer) {
-                exitFullscreenMode();
-            }
-            
-            // Make container fullscreen - CSS handles the iframe sizing automatically
-            container.classList.add('video-fullscreen-overlay');
-            
-            // Change button text
-            this.textContent = '[X] Exit';
-            
-            // Set as active container
-            activeFullscreenContainer = container;
-            
-            // Show floating exit button
-            exitBtn.classList.add('visible');
-        });
-    });
-    
-    // Floating exit button click handler
-    exitBtn.addEventListener('click', function() {
-        exitFullscreenMode();
-    });
-    
-    // Press Escape to exit fullscreen
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && activeFullscreenContainer) {
-            exitFullscreenMode();
-        }
-    });
-</script>
+    (function() {
+        // DOM elements
+        const playerFrame = document.getElementById('dynamicPlayer');
+        const btns = document.querySelectorAll('.tv-btn');
+        const resetBtn = document.getElementById('resetPlayerBtn');
 
+        // Channel URLs — exactly as given, stories uses Old Time Radio embed (oldtime.radio)
+        const channelMap = {
+            ytch:    'https://ytch.tv/',
+            music:   'https://www.youtube.com/embed/videoseries?list=PL4MpeqJSMtUVrFT7lHbhwDleO6PzmivPK',
+            theatre: 'https://www.youtube.com/embed/videoseries?list=PL4MpeqJSMtUX-lAJFv2O8ur3NoNmgLXPx',
+            gaming:  'https://www.youtube.com/embed/videoseries?list=PL4MpeqJSMtUWwPO4Ul3BZC2GoT1Dhp_B8',
+            stories: 'https://oldtime.radio',   // Old Time Radio embed / streaming
+            twitch:  'https://player.twitch.tv/?channel=ephemeralcalyptra&parent=calyptalinks.neocities.org&autoplay=false'
+        };
+
+        // helper: update active button styling
+        function setActiveButton(channelId) {
+            btns.forEach(btn => {
+                const btnChannel = btn.getAttribute('data-channel');
+                if (btnChannel === channelId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // flash animation on any button / reset
+        function addFlash(element) {
+            if (!element) return;
+            element.classList.add('click-flash');
+            setTimeout(() => {
+                element.classList.remove('click-flash');
+            }, 100);
+        }
+
+        // core function: load channel into iframe
+        function setChannel(channelId) {
+            const url = channelMap[channelId];
+            if (url) {
+                // simple security: keep same-origin policy but external embed is fine
+                playerFrame.src = url;
+                setActiveButton(channelId);
+                // optional: tiny status vibe (no clock, just feedback)
+                console.log(`[tv viewer] switched to ${channelId}`);
+            } else {
+                console.warn(`unknown channel: ${channelId}`);
+            }
+        }
+
+        // attach click handlers to each channel button
+        btns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addFlash(btn);
+                const channelId = btn.getAttribute('data-channel');
+                if (channelId) {
+                    setChannel(channelId);
+                }
+            });
+        });
+
+        // reset button: go back to television (ytch.tv) and update active state
+        if (resetBtn) {
+            resetBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                addFlash(resetBtn);
+                setChannel('ytch');
+                // extra micro UX: show reset feedback
+                const originalText = resetBtn.innerText;
+                resetBtn.innerText = '✓ television';
+                setTimeout(() => {
+                    resetBtn.innerText = originalText;
+                }, 800);
+            });
+        }
+
+        // ensure that the default channel is 'ytch' and iframe matches active button on page load
+        // (since default iframe src is already ytch.tv, but we sync active class just in case)
+        const defaultChannel = 'ytch';
+        setActiveButton(defaultChannel);
+        
+        // optional: if for any reason the iframe src is not matching the active button on reload,
+        // we set it explicitly. but initial HTML has src="https://ytch.tv/", so it's consistent.
+        // In case of any external navigation? no, we control via channel buttons only.
+        // also handle possible iframe errors silently (user friendly)
+        playerFrame.addEventListener('error', () => {
+            // just a passive fallback; not intrusive
+            console.log('iframe load error — maybe blocked by external site');
+        });
+    })();
+</script>
 </body>
 </html>
